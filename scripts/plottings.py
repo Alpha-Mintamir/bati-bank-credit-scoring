@@ -230,3 +230,33 @@ def plot_top_tens(df, numerical_cols):
 
     except Exception as e:
         logger.error(f"An error occurred while plotting top tens for numerical columns: {e}")
+
+
+def plot_top_customers(top_customers_by_amount, top_customers_by_transactions):
+    try:
+        logger.info("Starting plot_top_customers function")
+
+        # Plot top ten customers based on the amount they pay
+        logger.info("Plotting top ten customers based on amount paid")
+        plt.figure(figsize=(12, 6))
+        top_customers_by_amount.plot(kind='bar', color='skyblue')
+        plt.title('Top 10 Customers Based on Amount Paid')
+        plt.xlabel('CustomerId')
+        plt.ylabel('Total Amount Paid')
+        plt.xticks(rotation=45)
+        plt.show()
+
+        # Plot top ten customers based on the number of transactions
+        logger.info("Plotting top ten customers based on number of transactions")
+        plt.figure(figsize=(12, 6))
+        top_customers_by_transactions.plot(kind='bar', color='lightgreen')
+        plt.title('Top 10 Customers Based on Number of Transactions')
+        plt.xlabel('CustomerId')
+        plt.ylabel('Number of Transactions')
+        plt.xticks(rotation=45)
+        plt.show()
+
+        logger.info("plot_top_customers function completed successfully")
+    except Exception as e:
+        logger.error(f"An error occurred in plot_top_customers function: {e}")
+        raise
