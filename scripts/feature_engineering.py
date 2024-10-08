@@ -197,3 +197,30 @@ def normalize_numerical_features(df, numerical_cols, method='standardize'):
     except Exception as e:
         logger.error("Error in normalization/standardization of numerical features: %s", e)
         raise
+
+
+def normalize_columns(df, columns):
+    """
+    Normalize specified columns using MinMaxScaler.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The DataFrame with columns to normalize.
+    columns : list
+        List of columns to normalize.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with normalized columns.
+    """
+    logger.info("Starting normalization of columns: %s", columns)
+    try:
+        scaler = MinMaxScaler()
+        df[columns] = scaler.fit_transform(df[columns])
+        logger.info("Columns %s normalized successfully.", columns)
+        return df
+    except Exception as e:
+        logger.error("Error in normalization of columns %s: %s", columns, e)
+        raise
