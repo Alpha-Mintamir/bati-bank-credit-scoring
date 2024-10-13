@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import logging
 import os
 
@@ -82,6 +83,34 @@ class RFMSCalculator:
         monetary_df = self.df.groupby('CustomerId').agg(Monetary=('Amount', 'sum')).reset_index()
         logger.info("Monetary Value calculation completed")
         return monetary_df
+    def _calculate_rfms_label(self):
+        """
+        Assigns an RFMS label based on the calculated Recency, Frequency, and Monetary value metrics.
+
+        Returns
+        -------
+        pd.DataFrame
+            DataFrame with an RFMS_Label assigned based on certain criteria.
+        """
+        logger.info("Calculating RFMS Label")
+
+        # Define thresholds for 'Good' or 'Bad' classification
+        recency_threshold = self.df['Recency'].median()
+        frequency_threshold = self.df['Frequency'].median()
+        monetary_threshold = self.df['Monetary'].median()
+
+        # Assign RFMS_Label: 0 for 'Good', 1 for 'Bad'
+        conditions = [
+            (self.df['Recency'] <= recency_threshold) & 
+            (self.df['Frequency'] >= frequency_threshold) & 
+            (self.df['Monetary'] >= monetary_threshold)
+        ]
+
+        # Apply conditions and assign 0 ('Good') if conditions are met, else 1 ('Bad')
+        self.df['RFMS_Label'] = np.where(conditions[0], 0, 1)
+
+        logger.info("RFMS Label assignment completed")
+        return self.df
 
     def calculate_rfms(self):
         """
@@ -107,7 +136,10 @@ class RFMSCalculator:
         # Merge RFMS features with the original DataFrame
         self.df = pd.merge(self.df, rfms_df, on='CustomerId', how='left')
 
-        logger.info("RFMS calculation completed")
+        # Assign RFMS_Label based on calculated Recency, Frequency, and Monetary value
+        self._calculate_rfms_label()
+
+        logger.info("RFMS calculation and labeling completed")
         return self.df
 
 
