@@ -260,3 +260,87 @@ def plot_top_customers(top_customers_by_amount, top_customers_by_transactions):
     except Exception as e:
         logger.error(f"An error occurred in plot_top_customers function: {e}")
         raise
+
+
+
+
+class RFMSVisualizer:
+    def __init__(self, df):
+        """
+        Initializes the RFMSVisualizer with a DataFrame.
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            DataFrame containing RFMS scores and user labels.
+        """
+        self.df = df
+        logger.info("RFMSVisualizer initialized with DataFrame")
+
+    def plot_histogram(self, column, title):
+        """
+        Plots a histogram of a specified RFMS column.
+
+        Parameters
+        ----------
+        column : str
+            Column name of the RFMS feature to plot (e.g., 'Recency', 'Frequency', 'Monetary').
+        title : str
+            Title for the histogram plot.
+        """
+        try:
+            logger.info(f"Plotting histogram for column: {column}")
+            plt.figure(figsize=(10, 6))
+            sns.histplot(self.df[column], bins=20, kde=True)
+            plt.title(title)
+            plt.xlabel(column)
+            plt.ylabel('Count')
+            plt.show()
+            logger.info(f"Histogram for column {column} plotted successfully")
+        except Exception as e:
+            logger.error(f"Error plotting histogram for column {column}: {e}")
+            raise
+
+    def plot_bar(self, column, title):
+        """
+        Plots a bar chart showing the mean value of an RFMS feature per label ('Good' and 'Bad').
+
+        Parameters
+        ----------
+        column : str
+            Column name of the RFMS feature to plot (e.g., 'Recency', 'Frequency', 'Monetary').
+        title : str
+            Title for the bar plot.
+        """
+        try:
+            logger.info(f"Plotting bar chart for column: {column}")
+            plt.figure(figsize=(8, 6))
+            sns.barplot(x='User_Label', y=column, data=self.df, palette='coolwarm')
+            plt.title(title)
+            plt.xlabel('User Label')
+            plt.ylabel(f'Mean {column}')
+            plt.show()
+            logger.info(f"Bar chart for column {column} plotted successfully")
+        except Exception as e:
+            logger.error(f"Error plotting bar chart for column {column}: {e}")
+            raise
+
+    def plot_rfms_scatter(self):
+        """
+        Plots a scatter plot showing the relationship between Recency, Frequency, and Monetary value.
+        Points are colored by user labels ('Good' or 'Bad').
+        """
+        try:
+            logger.info("Plotting RFMS scatter plot")
+            plt.figure(figsize=(10, 8))
+            sns.scatterplot(x='Recency', y='Monetary', hue='User_Label', size='Frequency', 
+                            sizes=(40, 200), palette='coolwarm', data=self.df, alpha=0.7)
+            plt.title('RFMS Scatter Plot: Recency vs Monetary (Size = Frequency)')
+            plt.xlabel('Recency (days)')
+            plt.ylabel('Monetary Value')
+            plt.legend(title='User Label', loc='best')
+            plt.show()
+            logger.info("RFMS scatter plot plotted successfully")
+        except Exception as e:
+            logger.error(f"Error plotting RFMS scatter plot: {e}")
+            raise
